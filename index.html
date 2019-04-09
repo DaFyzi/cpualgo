@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 
+Autori:
+	Rihards Gailis rg14009
+	Kaspars Zombergs Kz14014
+ -->
+
+<style type="text/css">
+	* {border-color: black !important;}
+	table{
+	background-color: gainsboro !important}
+  table td{
+		text-align: center;
+    width: 10%%;
+  }
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+    <h1>CPU Scheduling</h1>
+    <table id="valueTable" class="table table-bordered">
+			<tr>
+        <th colspan="3"></th>
+        <th colspan="2">Priority Scheduling</th>
+				<th colspan="2">FCFS</th>
+      </tr>
+			<tr>
+        <th>Process</th>
+        <th>Process</th>
+        <th>Burst time</th>
+        <th>Priority</th>
+        <th>Wait time</th>
+        <th>Process completed</th>
+				<th>Wait time</th>
+      </tr>
+      <tr class="valueField">
+        <td>P1</td>
+        <td><input type="number" value="3"></td>
+        <td><input type="number" value="3"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+      </tr>
+      <tr class="valueField">
+        <td>P2</td>
+        <td><input type="number" value="9"></td>
+        <td><input type="number" value="1"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+      </tr>
+      <tr class="valueField">
+        <td>P3</td>
+        <td><input type="number" value="8"></td>
+        <td><input type="number" value="5"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+      </tr>
+      <tr class="valueField">
+        <td>P4</td>
+        <td><input type="number" value="1"></td>
+        <td><input type="number" value="4"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+      </tr>
+      <tr class="valueField">
+        <td>P5</td>
+        <td><input type="number" value="12"></td>
+        <td><input type="number" value="6"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+      </tr>
+      <tr class="valueField">
+        <td>P6</td>
+        <td><input type="number" value="3"></td>
+        <td><input type="number" value="10"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+        <td class="runtimeValues"></td>
+      </tr>
+    </table>
+    <button id="execute_btn" style="margin-bottom:25px" class="btn pull-right">Execute</button>
+    </div>
+    <div class="row"> 
+		<h2>Priority Scheduling</h2>
+    <table id="ganthTable_priority" class="table table-bordered">
+      <tr class="priority">
+        <td id="Priority-0" colspan="2"></td>
+        <td id="Priority-1" colspan="2"></td>
+        <td id="Priority-2" colspan="2"></td>
+        <td id="Priority-3" colspan="2"></td>
+        <td id="Priority-4" colspan="2"></td>
+        <td id="Priority-5" colspan="2"></td>
+      </tr>
+      <tr class="time">
+        <td id="Time-0"></td>
+        <td id="Time-1" colspan="2"></td>
+        <td id="Time-2" colspan="2"></td>
+        <td id="Time-3" colspan="2"></td>
+        <td id="Time-4" colspan="2"></td>
+        <td id="Time-5" colspan="2"></td>
+        <td id="Time-6"></td>
+      </tr>
+    </table>
+		<h2>FCFS</h2>
+    <table id="ganthTable_fcfs" class="table table-bordered">
+      <tr class="priority">
+        <td id="Priority-0" colspan="2"></td>
+        <td id="Priority-1" colspan="2"></td>
+        <td id="Priority-2" colspan="2"></td>
+        <td id="Priority-3" colspan="2"></td>
+        <td id="Priority-4" colspan="2"></td>
+        <td id="Priority-5" colspan="2"></td>
+      </tr>
+      <tr class="time">
+        <td id="Time-0"></td>
+        <td id="Time-1" colspan="2"></td>
+        <td id="Time-2" colspan="2"></td>
+        <td id="Time-3" colspan="2"></td>
+        <td id="Time-4" colspan="2"></td>
+        <td id="Time-5" colspan="2"></td>
+        <td id="Time-6"></td>
+      </tr>
+    </div>
+  </div>
+
+<script>
+
+  $("#execute_btn").click(function (){
+    clearTableInputs();
+    var tableValueArray = getTableData();
+
+    //Priority Scheduling algoritma realizācija
+    var sortedArrayForPriorityScheduling = sortForPriorityScheduling(tableValueArray);
+    var time1 = 0;
+    $(sortedArrayForPriorityScheduling).each(function(index) {
+      var row = $(this);
+      var arrayIndex = index;
+      var t = setTimeout(function(){
+        fillMainTable(row, 3,4, time1);
+				fillGanthTable(row, arrayIndex, time1, 'priority');
+				time1 += parseInt(row[1]);
+      }, 500 * index);
+    });
+
+		//FCFS algoritma realizācija
+		var sortedArrayForFCFS = sortForFCFS(tableValueArray);
+		var time2 = 0;
+		$(sortedArrayForFCFS).each(function(index) {
+      var row = $(this);
+      var arrayIndex = index;
+      var t = setTimeout(function(){
+        fillMainTable(row, 5,6, time2);
+				fillGanthTable(row, arrayIndex, time2, 'fcfs');
+				time2 += parseInt(row[1]);
+      }, 500 * index);
+    });
+  });
+
+  // No tabulām tiek dzēsti vecie rezultāti, lai atbrīvotu vietu jaunajiem
+  function clearTableInputs()
+  {
+    $("#valueTable tbody tr").find("td.runtimeValues").text("");
+    $("#ganthTable_priority tbody tr td").html("");
+    $("#ganthTable_fcfs tbody tr td").html("");
+    $("#ganthTable_rr tbody tr td").html("");
+  }
+
+  // Iegūstam lietotāja ievadītās vērtības, lai ar tām varētu apgādāt algoritmus
+  function getTableData()
+  {
+    var tableValueArray = new Array();
+    $("#valueTable .valueField").each(function(index, tr) {
+      var lines = $('td', tr).map(function(index, td) {
+        if($('input', td).val() !== undefined)
+        {
+          return $('input', td).val();
+        }
+        else
+        {
+          return $(td).text();
+        }
+      });
+      tableValueArray.push(lines);
+    });
+
+    return tableValueArray;
+  }
+
+  // Aizpilda galveno tabulu, lai pie katra procesa redzētu izpildes laiku un aizturi
+  function fillMainTable(variable, columNum1, columNum2, time)
+  {
+      var processName = variable[0];
+      var burstTime = parseInt(variable[1], 10);
+      var processRow = $("#valueTable td").filter(function() {
+        return $(this).text() == processName;
+      }).closest("tr");
+      processRow.find('td').eq(columNum1).text(time.toString());
+      processRow.find('td').eq(columNum2).text((time + burstTime).toString());
+  }
+
+  // Aizpilda Ganta tabulas, lai varētu redzēt kādā secībā izpildās procesi atkarībā no izvēlētā algoritma
+  function fillGanthTable(variable, index, time, tableId)
+  {
+    var processId = "#Priority-" + index;
+    var timeId = "#Time-" + index;
+    var timeId2 = "#Time-" + (index + 1);
+    var processName = variable[0];
+    var secondTime = time + parseInt(variable[1], 10);
+    $("#ganthTable_" + tableId + " tr.priority td").eq($(processId).index()).text(processName);
+    $("#ganthTable_" + tableId + " tr.time td").eq($(timeId).index()).text(time);
+    $("#ganthTable_" + tableId + " tr.time td").eq($(timeId2).index()).text(secondTime);
+  }
+
+  // Vērtību masīva kārtošana priekš Secon Job First algoritma realizācijas
+	function sortForSJF (data){
+		var res = [];
+		while(0 < data.length){
+			var shortest_elem = data[0];
+			var elem_idx = 0;
+			for(i in data){
+				if(parseInt(data[i][1]) < parseInt(shortest_elem[1])){
+					shortest_elem = data[i];
+					elem_idx = i;
+				}
+			}
+			res.push(shortest_elem);
+			data.splice(elem_idx, 1);
+		}
+		return res;
+	}
+
+  // Vērtību masīva kārtošana priekš First-come, First-server algoritma realizācijas
+  function sortForFCFS(tableValueArray)
+  {
+    tableValueArray.sort(function(a, b) {
+      return a[0][1] - b[0][1];
+    });
+    return tableValueArray;
+  }
+
+  //Vērtību masīva kārtošana priekš Priority Scheduling algoritma realizācijas
+  function sortForPriorityScheduling(tableValueArray)
+  {
+      tableValueArray.sort(function(a, b) {
+        return a[2] - b[2];
+      });
+      return tableValueArray;
+  }
+</script>
+
+</body>
+
+</html>
